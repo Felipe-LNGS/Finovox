@@ -6,39 +6,40 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app) #autorise tout le monde a parler avec l'api (MODE DEV)
 
-DOSSIER_FICHIERS = os.path.join(os.getcwd(), 'files')
+FILES_DIRECTORY = os.path.join(os.getcwd(), 'files')
 
-if not os.path.exists(DOSSIER_FICHIERS):
-    os.makedirs(DOSSIER_FICHIERS)
+if not os.path.exists(FILES_DIRECTORY):
+    os.makedirs(FILES_DIRECTORY)
 
 #gestion des routes api pour que react ai acces 
 @app.route('/api/files', methods=['GET'])
-def liste_fichiers():
-    mes_fichiers = []
+def list_files():
+    files_list = []
 
     try:
-        for nom_fichier in os.listdir(DOSSIER_FICHIERS):
-            chemin_complet = os.path.join(DOSSIER_FICHIERS, nom_fichier)
+        for filename in os.listdir(FILES_DIRECTORY):
+            full_path = os.path.join(FILES_DIRECTORY, filename)
             
-            if os.path.isfile(chemin_complet):
-                stats = os.stat(chemin_complet)
+            if os.path.isfile(full_path):
+                stats = os.stat(full_path)
                 #formatage de la date au format ISO
-                date_formater = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%dT%H:%M:%SZ')
-            mes_fichiers.append({
-                "name": nom_fichier,
-                "size": stats.st_size,
-                "last_modified": date_formater
-            })
+                formatted_date = datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%dT%H:%M:%SZ')
+                
+                files_list.append({
+                    "name": filename,
+                    "size": stats.st_size,
+                    "last_modified": formatted_date
+                })
         #permet de retourner en format JSON
-        return jsonify(mes_fichiers)
+        return jsonify(files_list)
     except Exception as e:
         return jsonify({"error":str(e)}), 500
     
 #gestion de la route pour le download
-@app.route('/download/<path:nom_du_fichier>', methods=['GET'])
-def telecharger(nom_du_fichier):
+@app.route('/download/<path:filename>', methods=['GET'])
+def download_file(filename):
     #utilisation de send_from pour eviter de remonter dans les dossiers systeme 
-    return send_from_directory(DOSSIER_FICHIERS, nom_du_fichier, as_attachment=True)
+    return send_from_directory(FILES_DIRECTORY, filename, as_attachment=True)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
