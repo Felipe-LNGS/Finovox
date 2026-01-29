@@ -1,0 +1,17 @@
+{
+  "name": "test_finovox",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd backend && python3 main.py",
+    "start:frontend": "cd frontend && npm run dev",
+    "setup": "npm install && cd frontend && npm install",
+
+    "test": "concurrently \"npm run test:backend\" \"npm run test:frontend\"",
+    "test:backend": "cd backend && pytest",
+    "test:frontend": "cd frontend && cd src && npm test"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}

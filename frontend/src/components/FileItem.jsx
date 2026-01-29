@@ -17,6 +17,15 @@ export default function FileItem({ file, onDownload, downloadingFileName }) {
     //verifie si le fichier a telecharger correspond au nom du fichier si oui->true 
     const isDownloading = downloadingFileName === file.name;
 
+    const infos = [];
+    if (file.size) 
+        infos.push(formatSize(file.size));
+
+    if (file.last_modified) {
+        infos.push(new Date(file.last_modified).toLocaleDateString());
+    }
+
+    const secondaryText = infos.join(' • ');
     return (
         <Paper elevation={0} sx={{
             p: 2, borderRadius: 4, bgcolor: 'var(--_color---white)',
@@ -35,7 +44,7 @@ export default function FileItem({ file, onDownload, downloadingFileName }) {
                 {/* formatage pour la taille en octet et formatage de la date */}
                 <ListItemText
                     primary={<Typography fontWeight="700" color="var(--_color---dark)">{file.name}</Typography>}
-                    secondary={`${formatSize(file.size)} • ${new Date(file.last_modified).toLocaleDateString()}`}
+                    secondary={secondaryText}
                     slotProps={{
                         secondary: { sx: { color: 'var(--_color---text-secondary)' } }
                     }}
