@@ -36,6 +36,9 @@ export default function FileItem({ file, onDownload, downloadingFileName }) {
                 <ListItemText
                     primary={<Typography fontWeight="700" color="var(--_color---dark)">{file.name}</Typography>}
                     secondary={`${formatSize(file.size)} • ${new Date(file.last_modified).toLocaleDateString()}`}
+                    slotProps={{
+                        secondary: { sx: { color: 'var(--_color---text-secondary)' } }
+                    }}
                 />
                 <IconButton
                     onClick={() => onDownload(file.name)}
